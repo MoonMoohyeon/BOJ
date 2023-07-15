@@ -34,7 +34,7 @@ int main(void)
             {
                 int no = DP[i - 1][w]; // 물건을 안넣는 경우
                 int yes = DP[i - 1][w - weights[i]] + values[i]; // 새 물건을 넣는 경우
-                DP[i][w] = max(no, yes); // 테이블에qee67680 저장되는 값을 현재까지의 최적값임을 보장
+                DP[i][w] = max(no, yes); // 테이블에 저장되는 값을 현재까지의 최적값임을 보장
             }
         }
     }
