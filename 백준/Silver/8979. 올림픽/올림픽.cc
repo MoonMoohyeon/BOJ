@@ -8,9 +8,9 @@
 using namespace std;
 
 int N, K;
-int g[1001];
-int s[1001];
-int b[1001];
+int g[1002];
+int s[1002];
+int b[1002];
 int ranking = 0;
 
 int main(void)
