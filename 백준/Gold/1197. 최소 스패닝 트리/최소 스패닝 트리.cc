@@ -1,65 +1,62 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <algorithm>
+#include <iostream>
+#include <vector>
 #include <queue>
-#include <stack>
-using namespace std;
+#include <utility>
+#include <climits>
 
-struct cmp {
-    bool operator()(pair<int, pair<int, int>> a, pair<int, pair<int, int>> b) // 가중치, a 노드, b 노드
-    {
-        if (a.first > b.first)
-            return true;
-        else
-            return false;
-    }
-};
-priority_queue<pair<int, pair<int, int>>,vector<pair<int, pair<int, int>>>, cmp> pq;
+using namespace std;
 
 vector<pair<int, int>> graph[10001];
 int mark[10001] = { 0, };
+priority_queue<pair<int, int>> pq;
+int min_cost[10001];
 
-int main(void)
-{
+int main(int argc, char** argv) {
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
     int V, E;
-    scanf("%d %d", &V, &E);
-    int a, b, c;
-    for (int i = 0; i < E; i++)
-    {
-        scanf("%d %d %d", &a, &b, &c);
-        graph[a].push_back({ b, c });
-        graph[b].push_back({ a, c });
+    cin >> V >> E;
+    for (int i = 0; i < E; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        graph[a].push_back({ c,b });
+        graph[b].push_back({ c,a });
     }
 
-    int cur = 1;
-    mark[cur] = 1;
-    for (int i = 0; i < graph[cur].size(); i++)
-    {
-        pq.push(make_pair( graph[cur][i].second, make_pair(cur, graph[cur][i].first) ));
+    for (int i = 1; i <= V; i++) {
+        min_cost[i] = INT_MAX;
     }
 
-    int res = 0;
-    while (!pq.empty())
-    {
-        auto output = pq.top();
+    min_cost[1] = 0;
+    pq.push({ 0, 1 });
+
+    long long sum = 0;
+    int cnt = 0;
+
+    while (!pq.empty() && cnt < V) {
+        int cost = -pq.top().first;
+        int pos = pq.top().second;
         pq.pop();
-        if (mark[output.second.first] == 1 && mark[output.second.second])
-            continue;
-        res += output.first;
-        cur = output.second.second;
-        mark[cur] = 1;
-        for (int i = 0; i < graph[cur].size(); i++)
-        {
-            int a = graph[cur][i].second;
-            int b = cur;
-            int c = graph[cur][i].first;
-            auto p = make_pair(b, c);
-            auto z = make_pair(a, p);
-            pq.push(z);
+
+        if (cost > min_cost[pos] || mark[pos]) continue;
+
+        sum += cost;
+        mark[pos] = 1;
+        cnt++;
+
+        for (auto& edge : graph[pos]) {
+            int ncost = edge.first;
+            int npos = edge.second;
+
+            if (!mark[npos] && ncost < min_cost[npos]) {
+                min_cost[npos] = ncost;
+                pq.push({ -ncost, npos });
+            }
         }
     }
 
-    printf("%d", res);
+    cout << sum;
+
 
     return 0;
 }
