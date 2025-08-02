@@ -1,68 +1,54 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <algorithm>
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <cstring>
 #include <queue>
 #include <stack>
+#include <algorithm>
+#include <utility>
 using namespace std;
 
-struct cmp {
-    bool operator()(pair<int, pair<int, int>> a, pair<int, pair<int, int>> b) // 가중치, a 노드, b 노드
-    {
-        if (a.first > b.first)
-            return true;
-        else
-            return false;
-    }
-};
-priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, cmp> pq;
+int graph[1001][1001];
+int visited[1001] = { 0, };
+priority_queue<pair<int, int>> pq;
 
-vector<pair<int, int>> graph[1001];
-int mark[1001] = { 0, };
+int main(int argc, char** argv) {
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
-int main(void)
-{
     int N;
-    scanf("%d", &N);
-    for (int i = 1; i <= N; i++)
-    {
-        for (int j = 1; j <= N; j++)
-        {
-            int temp;
-            scanf("%d", &temp);
-            if (i == j) continue;
-            graph[i].push_back({ j, temp });
+    cin >> N;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            int input;
+            cin >> input;
+            graph[i][j] = input;
         }
     }
 
-    int cur = 1;
-    mark[cur] = 1;
-    for (int i = 0; i < graph[cur].size(); i++)
-    {
-        pq.push(make_pair(graph[cur][i].second, make_pair(cur, graph[cur][i].first)));
-    }
+    pq.push({ 0,0 });
+    int cnt = 0;
+    long long sum = 0;
 
-    long long res = 0;
-    while (!pq.empty())
-    {
-        auto output = pq.top();
+    while (!pq.empty() && cnt < N) {
+        int cost = -pq.top().first;
+        int pos = pq.top().second;
         pq.pop();
-        if (mark[output.second.first] == 1 && mark[output.second.second])
-            continue;
-        res += output.first;
-        cur = output.second.second;
-        mark[cur] = 1;
-        for (int i = 0; i < graph[cur].size(); i++)
-        {
-            int a = graph[cur][i].second;
-            int b = cur;
-            int c = graph[cur][i].first;
-            auto p = make_pair(b, c);
-            auto z = make_pair(a, p);
-            pq.push(z);
+
+        if(visited[pos]) continue;
+        cnt++;
+        sum += cost;
+        visited[pos] = 1;
+
+        for (int i = 0; i < N; i++) {
+            int ncost = graph[pos][i];
+            int npos = i;
+            if (ncost && !visited[npos]) {
+                pq.push({ -ncost, npos });
+            }
         }
     }
 
-    printf("%lld\n", res);
+    cout << sum;
 
     return 0;
 }
