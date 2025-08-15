@@ -23,7 +23,7 @@ int arr[9][9];
 int arrcpy[9][9];
 
 void BFS(int i, int j) {
-	pair<int,int> cur;
+	pair<int, int> cur;
 	q.push({ i,j });
 	while (!q.empty()) {
 		cur = q.front();
@@ -46,6 +46,12 @@ int main() {
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 	cin >> N >> M;
 
+	/*
+		최대 8*8 영역에서 벽을 3개 세우는 모든 경우의 수에 대하여 BFS를 시행한다.
+		시행 후 안전 영역의 크기를 구하고, 영역의 크기가 최대인 경우를 출력한다.
+	*/
+
+
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			cin >> arr[i][j];
@@ -58,8 +64,8 @@ int main() {
 	int cnt, max;
 	cnt = max = 0;
 	for (int i = 0; i < v.size(); i++) {
-		for (int j = i+1; j < v.size(); j++) {
-			for (int k = j+1; k < v.size(); k++) {
+		for (int j = i + 1; j < v.size(); j++) {
+			for (int k = j + 1; k < v.size(); k++) {
 
 				for (int l = 0; l < N; l++) {
 					for (int m = 0; m < M; m++) {
