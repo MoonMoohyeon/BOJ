@@ -14,6 +14,9 @@ int DP[1000001][2]; // 1 = 얼리어답터일 때, 2 = 얼리어답터가 아닐
 void DFS(int start) {
     visited[start] = 1;
 
+    DP[start][1] = 1; // 모든 노드에 대하여 기본 초기화.
+    DP[start][0] = 0;
+
     for (auto i = graph[start].begin(); i != graph[start].end(); i++) {
         if (visited[*i]) continue;
         DFS(*i);
@@ -39,10 +42,10 @@ int main() {
         graph[b].push_back(a);
     }
 
-    for (int i = 1; i <= N; i++) {
-        DP[i][1] = 1; // 리프 노드에 대하여
-        DP[i][0] = 0;
-    }
+    //for (int i = 1; i <= N; i++) {
+    //    DP[i][1] = 1; // 리프 노드에 대하여
+    //    DP[i][0] = 0; // <-- 이 코드들이 DFS 내부로 들어가야 함. 올바르지 않은 추측과 로직.
+    //}
 
 
     /*
