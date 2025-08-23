@@ -13,8 +13,8 @@ unordered_map<int, string> idx_to_name;
 queue<int> q;
 vector<int> graph[1001];
 int indegree[1001];
-vector<int> root;
-vector<int> children[1001];
+vector<string> root;
+vector<string> children[1001];
 int N, M;
 
 int main()
@@ -47,7 +47,7 @@ int main()
     for (int i = 0; i < N; i++) {
         if (indegree[i] == 0) {
             q.push(i);
-            root.push_back(i);
+            root.push_back(idx_to_name[i]);
         }
     }
 
@@ -58,22 +58,24 @@ int main()
         for (auto i = graph[cur].begin(); i != graph[cur].end(); i++) {
             if (--indegree[*i] == 0) {
                 q.push(*i);
-                children[cur].push_back(*i);
+                children[cur].push_back(idx_to_name[*i]);
             }
         }
     }
 
     cout << root.size() << "\n";
     vector<string> s;
+    sort(root.begin(), root.end());
     for (auto i = root.begin(); i != root.end(); i++) {
-        cout << idx_to_name[*i] << " ";
+        cout << *i << " ";
     }
     cout << "\n";
     
     for (int i = 0; i < N; i++) {
+        sort(children[i].begin(), children[i].end());
         cout << idx_to_name[i] << " " << children[i].size() << " ";
         for (int j = 0; j < children[i].size(); j++) {
-            cout << idx_to_name[children[i][j]] << " ";
+            cout << children[i][j] << " ";
         }
         cout << "\n";
     }
