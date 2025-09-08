@@ -4,7 +4,6 @@
 using namespace std;
 
 int board[1001];
-int dp[1001];
 int dp_sum[1001];
 
 int main() {
@@ -18,7 +17,6 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 
-		dp[i] = 1;
 		dp_sum[i] = board[i];
 		for (int j = 0; j < i; j++) {
 			if (board[j] < board[i]) {
