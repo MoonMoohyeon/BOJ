@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#define MAX_QUEUE_SIZE (301 * 301)
 int board[301][301];
 int mark[301][301];
 int length = 0;
@@ -13,18 +13,33 @@ typedef struct {
     int y;
 } Point;
 
-Point queue[302 * 302];
+Point queue[MAX_QUEUE_SIZE];
 int front = 0, rear = 0;
 
+int isEmpty() {
+    return front == rear;
+}
+
+int isFull() { // 한 칸 비워두기
+    return (rear + 1) % MAX_QUEUE_SIZE == front;
+}
+
 void enqueue(int X, int Y) {
+    if (isFull()) {
+        return;
+    }
     queue[rear].x = X;
     queue[rear].y = Y;
-    rear++;
+    rear = (rear + 1) % MAX_QUEUE_SIZE;
 }
 
 Point dequeue() {
+    if (isEmpty()) {
+        Point n = { -1,-1 };
+        return n;
+    }
     Point p = queue[front];
-    front++;
+    front = (front + 1) % MAX_QUEUE_SIZE;
     return p;
 }
 
