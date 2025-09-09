@@ -1,70 +1,93 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <queue>
-#include <utility>
 #include <string>
+#include <queue>
+#include <algorithm>
+#include <unordered_map>
+
 using namespace std;
 
-int T, N, M, W;
-int buildtime[1001];
-vector<int> graph[1001];
-int indegree[1001];
-int mark[1001];
-int needtime[1001]; // DP
-queue<pair<int, int>> q;
+int N, M;
 
-int main(void) {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+vector<int> in_degree;
+vector<int> result;
+vector<int> time_vec;
+vector<vector<int>> adj;
+int answer = 0;
 
-    cin >> T;
-    for (int t = 1; t <= T; t++) {
-        cin >> N >> M;
-        for (int i = 1; i <= N; i++) {
-            cin >> buildtime[i];
-            indegree[i] = 0;
-            needtime[i] = 0;
-            mark[i] = 0;
-        }
-        q = queue<pair<int, int>>();
+int target_num = 0;
 
-        for (int i = 1; i <= N; i++) {
-            graph[i].clear();
-        }
+void init() {
 
-        for (int i = 1; i <= M; i++) {
-            int x, y;
-            cin >> x >> y;
-            graph[x].push_back(y);
-            indegree[y]++;
-        }
-        cin >> W;
+	cin >> N >> M;
 
-        // 큐로 다시 짜기
-        for (int i = 1; i <= N; i++) {
-            if (mark[i] == 0 && indegree[i] == 0) {
-                needtime[i] = buildtime[i];
-                q.push({ buildtime[i], i });
-            }
-        }
+	in_degree.assign(N + 1, 0);
+	result.assign(N + 1, 0);
+	time_vec.assign(N + 1, 0);
+	adj.assign(N + 1, {});
+	answer = 0;
 
-        while (!q.empty()) {
-            int cost = q.front().first;
-            int cur = q.front().second;
-            q.pop();
-            
-            for (auto i = graph[cur].begin(); i != graph[cur].end(); i++) {
-                needtime[*i] = max(needtime[*i], needtime[cur] + buildtime[*i]);
-                if (--indegree[*i] == 0) {
-                    q.push({ buildtime[*i], *i });
-                }
-            }
-        }
+	for (int i = 1; i <= N; i++) {
+		
+		cin >> time_vec[i];
+	}
 
-        cout << needtime[W] << "\n";
-    }
- 
-    return 0;
+	int start, end;
+	for (int i = 0; i < M; i++) {
+		cin >> start >> end;
+		adj[start].push_back(end);
+		in_degree[end]++;
+	}
+	cin >> target_num;
+}
+
+void Topology_Sort() {
+
+	queue<int> q;
+	for (int i = 1; i <= N; i++) {
+		if (in_degree[i] == 0) q.push(i);
+		result[i] = time_vec[i];
+	}
+
+	for (int i = 1; i <= N; i++) {
+		answer = max(answer, time_vec[i]);
+	}
+
+	while (!q.empty()) {
+
+		int now_node = q.front();
+		q.pop();
+
+		for (int i = 0; i < adj[now_node].size(); i++) {
+
+			int next_node = adj[now_node][i];
+
+			in_degree[next_node]--;
+			if (in_degree[next_node] == 0) {
+				q.push(next_node);
+			}
+			result[next_node] = max(result[next_node], result[now_node] + time_vec[next_node]);
+			answer = max(answer, result[next_node]);
+		}
+	}
+}
+		
+
+int main() {
+
+	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+	int T, test_case;
+	cin >> T;
+
+	for (test_case = 1; test_case < T + 1; test_case++) {
+
+		init();
+
+		Topology_Sort();
+
+		cout << result[target_num] << "\n";
+	}
+
+	return 0;
+	
 }
